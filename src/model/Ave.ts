@@ -1,6 +1,8 @@
+import { log } from "console";
 import { Animal } from "./Animal";
 import { DatabaseModel } from "./DatabaseModel";
 import { Habitat } from "./Habitat";
+import { Atracao } from "./Atracao";
 
 /**
  * Pool de conexão do banco de dados
@@ -12,6 +14,9 @@ const database = new DatabaseModel().pool;
  * Estende a classe Animal.
  */
 export class Ave extends Animal {
+    static atualizarAtracao(novaAtracao: Atracao, idAtracao: number) {
+        throw new Error('Method not implemented.');
+    }
 
     /**
      * A envergadura da ave (em centímetros).
@@ -160,6 +165,35 @@ export class Ave extends Animal {
         } catch (error) {
             console.log(`erro na consulta: ${error}`);
             return queryResult;
+        }
+    }
+
+    static async atualizarAve(ave: Ave , idAve : number): Promise<Boolean> {
+        let queryResult = false;
+
+        try{
+
+        const queryUpdateAve = `UPDATE animal SET
+        nomeAnimal='${ave.getNomeAnimal().toUpperCase()}',
+        idadeAnimal=${ave.getIdadeAnimal()},
+        generoAnimal='${ave.getGeneroAnimal().toUpperCase()}',
+        envergadura=${ave.getEnvergadura()}   
+        WHERE idAnimal=${idAve} `;
+
+    await database.query(queryUpdateAve)
+    .then((result) => {
+        if (result.rowCount !==0) {
+            queryResult = true;
+        }
+    })
+    
+    return queryResult;
+
+
+        } catch (error){
+            console.log(`erro na consulta:${error}`);
+            return queryResult;
+            
         }
     }
 }

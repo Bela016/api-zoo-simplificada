@@ -121,7 +121,7 @@ server.post('/novo/atracao', async (req, res) => {
 
 server.delete('/remover/animal', async (req, res) => {
     const idAnimal = parseInt(req.query.idAnimal as string);
-    
+
     const resultado = await Ave.removerAve(idAnimal);
 
     if (resultado) {
@@ -133,7 +133,7 @@ server.delete('/remover/animal', async (req, res) => {
 
 server.delete('/remover/habitat', async (req, res) => {
     const idHabitat = parseInt(req.query.idHabitat as string);
-    
+
     const resultado = await Ave.removerAve(idHabitat);
 
     if (resultado) {
@@ -142,6 +142,59 @@ server.delete('/remover/habitat', async (req, res) => {
         return res.status(401).json(`erro ao remover habitat`)
     }
 });
+
+
+server.put('/atualizar/animal', async (req, res) => {
+    const { nome, idade, genero, envergadura } = req.body;
+    const idAnimal = parseInt(req.query.idAnimal as string);
+
+    const novaAve = new Ave(nome, idade, genero, envergadura);
+    const result = await Ave.atualizarAve(novaAve, idAnimal);
+
+    if (result) {
+        return res.status(200).json('Ave atualizada com sucesso');
+
+    } else {
+        return res.status(400).json('nao foi possivel atualizar a ave do banco de dados');
+    }
+}
+)
+
+
+server.put('/atualizar/atracao', async (req, res) => {
+    const { nomeAtracao, habitatAtracao } = req.body;
+    const idAtracao = parseInt(req.query.idAtracao as string);
+
+    const novaAtracao = new Atracao(nomeAtracao);
+    const result = await Atracao.atualizarAtracao(novaAtracao, idAtracao);
+
+    if (result) {
+        return res.status(200).json('atracao atualizada com sucesso');
+
+    } else {
+        return res.status(400).json('nao foi possivel atualizar a atracao do banco de dados');
+    }
+}
+)
+
+server.put('/atualizar/habitat', async (req, res) => {
+    const { nomeHabitat, listaHabitat} = req.body;
+    const idHabitat = parseInt(req.query.idHabitat as string);
+
+    const novoHabitat = new Habitat(nomeHabitat);
+    const result = await Habitat.atualizarHabitat(novoHabitat, idHabitat);
+
+    if (result) {
+        return res.status(200).json('habitat atualizada com sucesso');
+
+    } else {
+        return res.status(400).json('nao foi possivel atualizar a habitat do banco de dados');
+    }
+}
+)
+
+
+
 
 
 new DatabaseModel().testeConexao().then((resbd) => {

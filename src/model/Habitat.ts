@@ -10,6 +10,11 @@ const database = new DatabaseModel().pool;
  * Representa um habitat no zoológico, onde os animais vivem.
  */
 export class Habitat {
+    // Faz a query de insert no banco de dados, passando para o banco as informações do objeto recebibo como parâmetro pela função
+    toUpperCase // Faz a query de insert no banco de dados, passando para o banco as informações do objeto recebibo como parâmetro pela função
+        () {
+        throw new Error("Method not implemented.");
+    }
 
     /**
      * O nome do habitat.
@@ -138,7 +143,7 @@ export class Habitat {
      * 
      * @returns Lista com todos os habitats cadastrados e os animais vinculados a eles
      */
-    static async exibirAnimaisPorHabitat(idHabitat: number) : Promise<any> {
+    static async exibirAnimaisPorHabitat(idHabitat: number): Promise<any> {
         try {
             // Retorna todos os animais de um Habitat (informado como parâmetro). Caso o Habitat não tenha nenhum animal é retornado uma lista vazia
             const querySelectHabitatsComAnimais = `
@@ -160,7 +165,7 @@ export class Habitat {
                 ORDER BY
                     h.idHabitat, a.idAnimal;
             `;
-            
+
             const queryReturn = await database.query(querySelectHabitatsComAnimais);
             return queryReturn.rows;
         } catch (error) {
@@ -207,34 +212,63 @@ export class Habitat {
     }
 
 
-    static async removerHabitat(idHabitat:number):Promise<Boolean>{
+    static async removerHabitat(idHabitat: number): Promise<Boolean> {
         let queryResult = false;
 
-        try{
+        try {
 
             const queryDeleteAnimalHabitat = `DELETE FROM animal_habitat WHERE idhabitat=${idHabitat}`;
-           
-           
-            await database.query(queryDeleteAnimalHabitat)
-            .then(async(result) => {
-                
-                if(result.rowCount != 0) {
-                const queryDeleteAnimalHabitat = `DELETE FROM habitat WHERE idhabitat= ${idHabitat}`; 
-                await database.query(queryDeleteAnimalHabitat)
-                .then((result) => {
 
-                    if(result.rowCount !=0){
-                        queryResult = true;
+
+            await database.query(queryDeleteAnimalHabitat)
+                .then(async (result) => {
+
+                    if (result.rowCount != 0) {
+                        const queryDeleteAnimalHabitat = `DELETE FROM habitat WHERE idhabitat= ${idHabitat}`;
+                        await database.query(queryDeleteAnimalHabitat)
+                            .then((result) => {
+
+                                if (result.rowCount != 0) {
+                                    queryResult = true;
+                                }
+                            })
                     }
                 })
-            }
-        })
-    
+
             return queryResult
 
-        } catch (error){
+        } catch (error) {
             console.log(`erro na consulta:${error}`);
             return queryResult;
         }
     }
+
+
+    static async atualizarHabitat(habitat: Habitat, idHabitat: number): Promise<Boolean> {
+        let queryResult = false;
+
+        try {
+
+            const queryUpdateHabitat = `UPDATE habitat SET
+                                            nomeHabitat='${habitat.getNomeHabitat().toUpperCase()}'
+                                            WHERE idHabitat=${idHabitat} `;
+
+            await database.query(queryUpdateHabitat)
+                .then((result) => {
+                    if (result.rowCount !== 0) {
+                        queryResult = true;
+                    }
+                })
+
+            return queryResult;
+
+
+        } catch (error) {
+            console.log(`erro na consulta:${error}`);
+            return queryResult;
+
+        }
+    }
+
+
 }
