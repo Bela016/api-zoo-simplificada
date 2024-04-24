@@ -125,7 +125,7 @@ export class Atracao {
         let insertResult = false;
         let queryInsertAtracao: string;
         try {
-            if(!idHabitat) {
+            if (!idHabitat) {
                 // Construção da query para inserir as informações de um Mamifero. A query irá retornar o ID gerado para o animal pelo banco de dados
                 queryInsertAtracao = `INSERT INTO atracao (nomeatracao) 
                                             VALUES 
@@ -154,6 +154,33 @@ export class Atracao {
 
             // Caso a inserção no banco der algum erro, é restorno o valor FALSO para quem chamou a função
             return insertResult;
+        }
+    }
+    static async removerAtracao(idAtracao: number): Promise<Boolean> {
+        let queryResult = false;
+
+        try {
+            const queryDeleteAnimalAtracao = `DELETE FROM animal_atracao WHERE idatracao=${idAtracao}`;
+
+
+            await database.query(queryDeleteAnimalAtracao)
+                .then(async (result) => {
+                    if (result.rowCount != 0) {
+                        const queryDeleteAnimalAtracao = `DELETE FROM atracao WHERE idatracao=${idAtracao}`;
+                        await database.query(queryDeleteAnimalAtracao)
+                            .then((result) => {
+                                if (result.rowCount != 0) {
+                                    queryResult = true;
+                                }
+                            })
+                            
+                    }
+                })
+                return queryResult
+
+        }catch (error){
+            console.log(`erro na consulta ${error}`);
+            return queryResult;
         }
     }
 }

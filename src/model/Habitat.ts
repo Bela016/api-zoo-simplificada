@@ -205,4 +205,36 @@ export class Habitat {
             return insertResult;
         }
     }
+
+
+    static async removerHabitat(idHabitat:number):Promise<Boolean>{
+        let queryResult = false;
+
+        try{
+
+            const queryDeleteAnimalHabitat = `DELETE FROM animal_habitat WHERE idhabitat=${idHabitat}`;
+           
+           
+            await database.query(queryDeleteAnimalHabitat)
+            .then(async(result) => {
+                
+                if(result.rowCount != 0) {
+                const queryDeleteAnimalHabitat = `DELETE FROM habitat WHERE idhabitat= ${idHabitat}`; 
+                await database.query(queryDeleteAnimalHabitat)
+                .then((result) => {
+
+                    if(result.rowCount !=0){
+                        queryResult = true;
+                    }
+                })
+            }
+        })
+    
+            return queryResult
+
+        } catch (error){
+            console.log(`erro na consulta:${error}`);
+            return queryResult;
+        }
+    }
 }
